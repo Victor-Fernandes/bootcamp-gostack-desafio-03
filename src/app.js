@@ -3,8 +3,8 @@ import express from 'express';
 import 'express-async-errors';
 import path from 'path';
 import Youch from 'youch';
-import routes from './routes';
 import './database';
+import routes from './routes';
 
 class App {
   constructor() {
@@ -12,6 +12,7 @@ class App {
 
     this.middlewares();
     this.routes();
+    this.exceptionHandler();
   }
 
   middlewares() {
@@ -26,6 +27,7 @@ class App {
     this.server.use(routes);
   }
 
+  // metodo para tratamento de exceções
   exceptionHandler() {
     this.server.use(async (err, req, res, next) => {
       if (process.env.NODE_ENV === 'development') {
