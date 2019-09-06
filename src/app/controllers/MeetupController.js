@@ -22,10 +22,9 @@ class MeetupController {
       return res.status(400).json({ error: 'Meetup date invalid' });
     }
 
-    const user_id = req.userId;
     const meetup = await Meetup.create({
       ...req.body,
-      user_id,
+      user_id: req.userId,
     });
 
     return res.json(meetup);
