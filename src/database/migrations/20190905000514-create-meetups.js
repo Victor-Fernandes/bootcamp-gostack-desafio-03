@@ -10,26 +10,26 @@ module.exports = {
       file_id: {
         type: Sequelize.INTEGER,
         references: { model: 'files', key: 'id' },
-        allowNull: false,
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
+        allowNull: false,
       },
       user_id: {
         type: Sequelize.INTEGER,
         references: { model: 'users', key: 'id' },
-        allowNull: false,
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
+        allowNull: false,
       },
       title: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      location: {
+      description: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      description: {
+      location: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -48,8 +48,7 @@ module.exports = {
     });
   },
 
-  // eslint-disable-next-line no-unused-vars
-  down: (queryInterface, Sequelize) => {
+  down: queryInterface => {
     return queryInterface.dropTable('meetups');
   },
 };
