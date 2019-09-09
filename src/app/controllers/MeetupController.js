@@ -79,18 +79,17 @@ class MeetupController {
       return res.status(401).json({ error: 'Validation fails' });
     }
 
-    // Verificar se o usuario está autorizado a alterar dados do meetup
     const user_id = req.userId;
-    const meetup = await Meetup.findByPk(req.params.id);
+    // const fileId = await File.findByPk(req.body.file_id);
+    const meetup = await Meetup.findByPk(req.params.idMeetup);
 
+    // Verificar se o usuario está autorizado a alterar dados do meetup
     if (meetup.user_id !== user_id) {
       return res.status(401).json({ error: 'Not authorized' });
     }
 
     // Verificando se o file_id existe
-    const file = await File.findByPk(req.body.file_id);
-
-    if (!file) {
+    if (!(await File.findByPk(req.body.file_id))) {
       return res.status(401).json({ error: 'File not found' });
     }
 
@@ -106,6 +105,30 @@ class MeetupController {
 
     await meetup.update(req.body);
     return res.json(meetup);
+  }
+
+  async delete(req, res) {
+    const user_id = req.userId;
+    const meetup = await Meetup.findByPk(req.params.idMeetup);
+
+    // Verificando se o id do meetup está correto
+    if (!meetup) {
+      return res.json({ error: 'Meetup not found' });
+    }
+
+    // Verificar se o usuario está autorizado a alterar dados do meetup
+    if (meetup.user_id !== user_id) {
+      return res.status(401).json({ error: 'Not authorized' });
+    }
+
+    // Verifcando se o meetup já passou
+    if (meetup.past) {
+      return res.status(401).json({ error: "Can't delete past meetups" });
+    }
+
+    await meetup.destroy();
+
+    return res.send();
   }
 }
 export default new MeetupController();
