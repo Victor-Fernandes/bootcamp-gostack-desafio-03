@@ -20,8 +20,8 @@ routes.put('/users', UserController.update);
 
 routes.post('/meetups', MeetupController.store);
 routes.get('/meetups', MeetupController.index);
-routes.put('/meetups/:idMeetup', MeetupController.update);
-routes.delete('/meetups/:idMeetup', MeetupController.delete);
+routes.put('/meetups/:id', MeetupController.update);
+routes.delete('/meetups/:id', MeetupController.delete);
 
 routes.post('/meetups/:idMeetup/subscription', SubscriptionController.store);
 

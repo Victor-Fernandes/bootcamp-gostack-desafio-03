@@ -81,7 +81,7 @@ class MeetupController {
 
     const user_id = req.userId;
     // const fileId = await File.findByPk(req.body.file_id);
-    const meetup = await Meetup.findByPk(req.params.idMeetup);
+    const meetup = await Meetup.findByPk(req.params.id);
 
     // Verificar se o usuario está autorizado a alterar dados do meetup
     if (meetup.user_id !== user_id) {
@@ -109,7 +109,7 @@ class MeetupController {
 
   async delete(req, res) {
     const user_id = req.userId;
-    const meetup = await Meetup.findByPk(req.params.idMeetup);
+    const meetup = await Meetup.findByPk(req.params.id);
 
     // Verificando se o id do meetup está correto
     if (!meetup) {
