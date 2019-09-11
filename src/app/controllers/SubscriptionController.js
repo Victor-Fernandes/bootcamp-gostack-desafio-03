@@ -1,16 +1,16 @@
 /* eslint-disable class-methods-use-this */
-
+import User from '../models/User';
 import Meetup from '../models/Meetup';
 import Subscription from '../models/Subscription';
-import User from '../models/User';
 
 class SubscriptionController {
   async store(req, res) {
-    const user = await User.findByPk(req.UserId);
+    const user = await User.findByPk(req.userId);
     const meetup = await Meetup.findByPk(req.params.idMeetup, {
       include: [User],
     });
-
+    console.log(req.userId);
+    console.log(meetup.user_id);
     if (meetup.user_id === req.userId) {
       return res
         .status(400)
@@ -42,16 +42,12 @@ class SubscriptionController {
         .json({ error: "Can't subscribe to two meetups at the same time" });
     }
 
-    try {
-      const subscription = await Subscription.create({
-        user_id: user.id,
-        meetup_id: meetup.id,
-      });
-      return res.json(subscription);
-    } catch (error) {
-      return error;
-    }
+    const subscription = await Subscription.create({
+      user_id: user.id,
+      meetup_id: meetup.id,
+    });
+
+    return res.json(subscription);
   }
 }
-
 export default new SubscriptionController();
