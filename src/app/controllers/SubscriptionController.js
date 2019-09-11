@@ -9,22 +9,20 @@ class SubscriptionController {
     const meetup = await Meetup.findByPk(req.params.idMeetup, {
       include: [User],
     });
-    console.log(req.userId);
-    console.log(meetup.user_id);
-    if (meetup.user_id === req.userId) {
+
+    // Verificação para usuario na se inscresver nos propios meetups.
+    if (meetup.user_id === user) {
       return res
-        .status(400)
+        .status(401)
         .json({ error: "Can't subscribe to you own meetups" });
     }
 
     if (meetup.past) {
-      return res.status(400).json({ error: "Can't subscribe to past meetups" });
+      return res.status(400).json({ error: "Can't subscribe in past meetups" });
     }
 
     const checkDate = await Subscription.findOne({
-      where: {
-        user_id: user.id,
-      },
+      where: { user_id: user.id },
       include: [
         {
           model: Meetup,
@@ -36,18 +34,19 @@ class SubscriptionController {
       ],
     });
 
+    // Verificando se o usuario já está cadastrado em outro meetup no mesmo horario
     if (checkDate) {
-      return res
-        .status(400)
-        .json({ error: "Can't subscribe to two meetups at the same time" });
+      return res.status(401).json({
+        error: "Can't subscribe to two meetups at the same time",
+      });
     }
 
-    const subscription = await Subscription.create({
+    const subscribe = await Subscription.create({
       user_id: user.id,
       meetup_id: meetup.id,
     });
 
-    return res.json(subscription);
+    return res.json(subscribe);
   }
 }
 export default new SubscriptionController();
