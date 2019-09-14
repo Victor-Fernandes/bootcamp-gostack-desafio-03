@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
-import noidemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 import exphbs from 'express-handlebars';
-import noidemailerhbs from 'nodemailer-express-handlebars';
+import nodemailerhbs from 'nodemailer-express-handlebars';
 import { resolve } from 'path';
 import mailConfig from '../config/mail';
 
@@ -9,22 +9,22 @@ class Mail {
   constructor() {
     const { host, port, secure, auth } = mailConfig;
 
-    this.transporter = noidemailer.createTransport({
+    this.transporter = nodemailer.createTransport({
       host,
       port,
       secure,
       auth: auth.user ? auth : null,
     });
 
-    this.configureTemplates();
+    this.configureTemplate();
   }
 
-  configureTemplates() {
+  configureTemplate() {
     const viewPath = resolve(__dirname, '..', 'app', 'views', 'emails');
 
     this.transporter.use(
       'compile',
-      noidemailerhbs({
+      nodemailerhbs({
         viewEngine: exphbs.create({
           layoutsDir: resolve(viewPath, 'layouts'),
           partialsDir: resolve(viewPath, 'partials'),
@@ -38,8 +38,8 @@ class Mail {
   }
 
   sendMail(message) {
-    return this.sendMail({
-      ...mailConfig,
+    return this.transporter.sendMail({
+      ...mailConfig.default,
       ...message,
     });
   }

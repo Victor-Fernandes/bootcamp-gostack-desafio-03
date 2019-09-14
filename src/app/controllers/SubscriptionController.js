@@ -5,6 +5,7 @@ import Meetup from '../models/Meetup';
 import Subscription from '../models/Subscription';
 import Queue from '../../lib/Queue';
 import SubscriptionMail from '../jobs/SubscriptionMail';
+import Mail from '../../lib/Mail';
 
 class SubscriptionController {
   async index(req, res) {
@@ -13,12 +14,12 @@ class SubscriptionController {
       include: [
         {
           model: Meetup,
-          required: true,
           where: {
             date: {
               [Op.gt]: new Date(),
             },
           },
+          required: true,
         },
       ],
       order: [[Meetup, 'date']],
@@ -67,9 +68,21 @@ class SubscriptionController {
       meetup_id: meetup.id,
     });
 
-    await Queue.add(SubscriptionMail.key, {
-      meetup,
-      user,
+    // await Queue.add(SubscriptionMail.key, {
+    //   meetup,
+    //   user,
+    // });
+    // solução temporaria para enviar emails
+    await Mail.sendMail({
+      to: `${meetup.User.name} <${meetup.User.email}>`,
+      Subject: `[${meetup.title}] has a new subscribe`,
+      template: 'confirmationMail',
+      context: {
+        userOrg: meetup.User.name,
+        meetup: meetup.title,
+        user: user.name,
+        email: user.email,
+      },
     });
 
     return res.json(subscription);
